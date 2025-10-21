@@ -1,0 +1,167 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Brand Colors - Modern Purple Palette */
+    --background: 0 0% 100%;
+    --foreground: 270 30% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 270 30% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 270 30% 20%;
+
+    /* Primary - Vibrant Purple */
+    --primary: 270 70% 50%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 270 70% 65%;
+    --primary-dark: 270 70% 35%;
+
+    /* Secondary - Light Purple Background */
+    --secondary: 270 50% 97%;
+    --secondary-foreground: 270 30% 20%;
+
+    /* Muted - Soft Purple Gray */
+    --muted: 270 20% 92%;
+    --muted-foreground: 270 10% 45%;
+
+    /* Accent - Medium Purple */
+    --accent: 270 60% 90%;
+    --accent-foreground: 270 30% 20%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 270 20% 90%;
+    --input: 270 20% 85%;
+    --ring: 270 70% 50%;
+
+    --radius: 0.75rem;
+
+    /* Success State */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+
+    /* Warning State */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(270 70% 50%) 0%, hsl(280 70% 60%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(270 60% 95%) 0%, hsl(280 50% 98%) 50%, hsl(0 0% 100%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(270 50% 98%) 100%);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(270 70% 50% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(270 70% 50% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(270 70% 50% / 0.15);
+    --shadow-xl: 0 20px 25px -5px hsl(270 70% 50% / 0.2);
+    --shadow-purple: 0 10px 40px -10px hsl(270 70% 50% / 0.3);
+
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    --background: 201 100% 8%;
+    --foreground: 0 0% 98%;
+
+    --card: 201 100% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 201 100% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 201 100% 40%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 201 50% 15%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 201 30% 20%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 201 30% 25%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 201 30% 20%;
+    --input: 201 30% 25%;
+    --ring: 201 100% 40%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer utilities {
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary via-primary-light to-primary bg-clip-text text-transparent;
+  }
+
+  .card-elevated {
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition-smooth);
+  }
+
+  .card-elevated:hover {
+    box-shadow: var(--shadow-purple);
+    transform: translateY(-4px);
+  }
+
+  .button-shadow {
+    box-shadow: var(--shadow-md);
+  }
+
+  .animate-slide-left {
+    animation: slide-left 30s linear infinite;
+  }
+
+  @keyframes slide-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out;
+  }
+
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
