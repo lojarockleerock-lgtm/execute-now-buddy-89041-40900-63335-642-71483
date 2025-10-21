@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { 
   formatCPF, 
@@ -37,7 +38,7 @@ export const QualificationStep = ({ data, onChange }: QualificationStepProps) =>
   const [loadingCEP, setLoadingCEP] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | boolean) => {
     onChange({ ...data, [field]: value });
     // Limpar erro quando usuário começar a digitar
     if (errors[field]) {
@@ -180,6 +181,26 @@ export const QualificationStep = ({ data, onChange }: QualificationStepProps) =>
             💡 <strong>Dica:</strong> Preencha seus dados conforme aparecem nos documentos oficiais (RG, CPF, CTPS). Os campos com * são obrigatórios.
           </p>
         </div>
+        
+        {/* Processo Digital */}
+        <div className="bg-secondary border rounded-lg p-4 mb-4">
+          <div className="flex items-start gap-3">
+            <Checkbox 
+              id="processoDigital" 
+              checked={data.processoDigital || false}
+              onCheckedChange={(checked) => handleChange("processoDigital", checked)}
+            />
+            <div className="flex-1">
+              <Label htmlFor="processoDigital" className="cursor-pointer font-medium">
+                Possui meios para participar de audiência virtual e prefere que o processo tramite em juízo 100% digital, caso possível?
+              </Label>
+              <p className="text-xs text-muted-foreground mt-1">
+                Marcando esta opção, você indica que tem acesso a internet e dispositivos para participar de audiências online.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="nome">Nome Completo *</Label>

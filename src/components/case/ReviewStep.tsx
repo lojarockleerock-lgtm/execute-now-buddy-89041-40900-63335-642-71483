@@ -169,101 +169,80 @@ Dúvidas: Procure o atendimento do TRT da sua região.`;
     const q = caseData.qualification || {};
     const claims = caseData.claims || [];
     const factsData = Array.isArray(caseData.facts) ? caseData.facts : (caseData.facts?.facts || []);
-    const totalValue = caseData.calculations?.totalGeral || 0;
-    const dataAdmissao = q.dataAdmissao || '[data de admissão]';
-    const dataDemissao = q.dataDemissao || '';
-    const salarioBruto = parseFloat(q.salarioBruto) || 0;
+    const calculations = caseData.calculations || {};
+    const totalValue = calculations.totalGeral || 0;
+    const dataAdmissao = q.dataAdmissao || '[xx/xx/xxxx]';
+    const dataDemissao = q.dataDemissao || '[xx/xx/xxxx]';
+    const salarioBruto = q.salarioBruto_numeric || parseFloat(q.salarioBruto) || 0;
+    const motivoDesligamento = caseData.dismissalType || 'dispensa sem justa causa';
     
-    const factsNarrative = factsData.map((f: any) => 
-      `Em ${f.date}, ${f.description}`
-    ).join('. ');
+    // Construir narrativa dos fatos
+    const factsNarrative = factsData.length > 0 
+      ? factsData.map((f: any) => `${f.description}`).join('. ')
+      : '[Descreva aqui sua história resumida com todos os fatos relevantes]';
 
-    const claimsFormatted = claims.map((c: any, idx: number) => {
-      const calc = caseData.calculations?.items?.find((item: any) => item.claimType === c.type);
+    // Montar lista de pedidos com valores
+    const pedidosDetalhados = claims.map((c: any, idx: number) => {
+      const calc = calculations.items?.find((item: any) => item.claimType === c.type);
       const value = calc?.total || calc?.value || 0;
-      const valueText = value > 0 ? ` - ${formatCurrency(value)}` : '';
-      return `${idx + 1}. ${c.title}${valueText} - Fundamentação: ${c.article || 'CLT'}`;
+      const valueText = value > 0 ? `: ${formatCurrency(value)}` : '';
+      return `${idx + 1}. ${c.title}${valueText}`;
     }).join('\n');
 
-    const calculationsText = claims.map((c: any) => {
-      const calc = caseData.calculations?.[c.type];
-      if (calc) {
-        return `• ${calc.label}: ${formatCurrency(calc.value)}`;
-      }
-      return `• ${c.title}`;
-    }).join('\n');
+    // Montar resumo de valores para a seção 5
+    let valoresTotaisTexto = '';
+    if (calculations.items && calculations.items.length > 0) {
+      valoresTotaisTexto = calculations.items.map((item: any) => {
+        return `${item.label}: ${formatCurrency(item.value || item.total || 0)}`;
+      }).join('\n');
+    }
 
-    return `EXCELENTÍSSIMO(A) SENHOR(A) DOUTOR(A) JUIZ(A) DO TRABALHO
-DA ${q.vara || 'VARA DO TRABALHO'} DE ${q.cidade?.toUpperCase() || '[CIDADE]'} - ${q.estado?.toUpperCase() || '[ESTADO]'}
+    return `${q.nome || '[Seu nome completo]'}:
+Nacionalidade: ${q.nacionalidade || '[nacionalidade]'}, estado civil: ${q.estadoCivil || '[estado civil]'}, profissão: ${q.profissao || '[profissão]'}, portador(a) do RG ${q.rg || '[xxx]'}, CPF nº ${q.cpf || '[xxx]'}, residente e domiciliado(a) ${q.endereco ? `à ${q.endereco}, ${q.bairro || ''}, ${q.cidade || ''} - ${q.estado || ''}, CEP ${q.cep || ''}` : '[endereço completo com CEP]'}, telefone/whatsapp ${q.telefone || '(xx) xxxxx-xxxx'}, vem, respeitosamente, à presença de Vossa Excelência propor a presente:
 
+Reclamação Trabalhista
+Com fundamento no art. 840 da CLT e art. 319 do CPC, em face de:
 
-${q.nome?.toUpperCase() || '[RECLAMANTE]'}, ${q.nacionalidade || 'brasileiro(a)'}, ${q.estadoCivil || '[estado civil]'}, ${q.profissao || '[profissão]'}, portador(a) do CPF nº ${q.cpf || '[CPF]'}, residente e domiciliado(a) à ${q.endereco || '[endereço]'}, ${q.cidade || '[cidade]'} - ${q.estado || '[estado]'}, vem, respeitosamente, à presença de Vossa Excelência, por meio do direito constitucional de jus postulandi (art. 791 da CLT), propor a presente
+${q.empresa_nome || '[Razão social da Empresa]'}
+Inscrita no CNPJ sob o nº ${q.empresa_cnpj || '[xxxxx]'}, com sede ${q.empresa_endereco ? `à ${q.empresa_endereco}, ${q.empresa_bairro || ''}, ${q.empresa_cidade || ''} - ${q.empresa_estado || ''}, CEP ${q.empresa_cep || ''}` : '[endereço completo com CEP]'}, endereço para notificações, pelos fatos e fundamentos a seguir expostos:
 
-RECLAMAÇÃO TRABALHISTA
+1: DA OPÇÃO PELO PROCESSO DIGITAL
 
-em face de ${q.empresa_nome?.toUpperCase() || '[EMPRESA RECLAMADA]'}, pessoa jurídica de direito privado, inscrita no CNPJ sob o nº ${q.empresa_cnpj || '[CNPJ]'}, com sede na ${q.empresa_endereco || '[endereço da empresa]'}, pelos fatos e fundamentos a seguir expostos:
+${q.processoDigital ? 'O(A) Reclamante informa que possui meios para participar de audiência virtual e prefere que o processo tramite em juízo 100% digital, caso possível.' : 'O(A) Reclamante não optou pelo processo 100% digital.'}
 
+2: DA RELAÇÃO DE TRABALHO
 
-I - DOS FATOS
+Data de admissão: ${dataAdmissao}
+Data de saída: ${dataDemissao}
+Motivo do desligamento: ${motivoDesligamento}
+Função exercida: ${q.cargo || '[xxxxx]'}
+Último salário: ${formatCurrency(salarioBruto)}
 
-O(A) Reclamante foi admitido(a) pela Reclamada em ${dataAdmissao} para exercer a função de ${q.cargo || '[cargo]'}, com salário mensal de ${formatCurrency(salarioBruto)}.
+O(A) Reclamante foi contratado(a) pela empresa Reclamada para exercer a função acima, prestando serviços no endereço ${q.local_trabalho_endereco ? `${q.local_trabalho_endereco}, ${q.local_trabalho_cidade || ''} - ${q.local_trabalho_estado || ''}, CEP ${q.local_trabalho_cep || ''}` : '[local da prestação de serviço com CEP]'}, até a data da saída mencionada.
 
-${factsNarrative || 'Durante o período laboral, o(a) Reclamante foi submetido(a) a diversas irregularidades trabalhistas que motivam a presente ação.'}
+3: DOS FATOS
 
-O vínculo empregatício perdurou até ${dataDemissao || '[data de demissão]'}, quando o(a) Reclamante foi dispensado(a) sem justa causa${dataDemissao ? '' : ' ou permanece trabalhando até a presente data'}.
+${factsNarrative}
 
+4: DOS PEDIDOS
 
-II - DO DIREITO
+Com base nos direitos trabalhistas e na legislação vigente, venho requerer:
 
-Os fatos narrados configuram flagrante violação aos direitos trabalhistas previstos na Consolidação das Leis do Trabalho (CLT) e na Constituição Federal, conforme fundamentos específicos de cada pedido.
+${pedidosDetalhados}
 
-${claims.map((c: any) => `
-${c.title.toUpperCase()}
-${c.description || ''}
-Fundamentação legal: ${c.article || 'CLT'}
-`).join('\n')}
+5: TOTAL DA CAUSA
 
+${valoresTotaisTexto}
 
-III - DOS PEDIDOS
+Total geral: ${formatCurrency(totalValue)}
 
-Diante do exposto, requer a PROCEDÊNCIA dos pedidos para:
+Termos em que, pede deferimento
 
-${claimsFormatted}
-
-${claims.length + 1}. CONDENAR a Reclamada ao pagamento das seguintes verbas trabalhistas:
-
-${calculationsText}
-
-VALOR TOTAL DA CAUSA: ${formatCurrency(totalValue)}
-
-${claims.length + 2}. Pagamento de honorários advocatícios, caso haja condenação da Reclamada.
-
-${claims.length + 3}. Condenação da Reclamada ao pagamento das custas processuais.
-
-
-IV - DAS PROVAS
-
-Protesta pela produção de todos os meios de prova em direito admitidos, especialmente:
-- Depoimento pessoal do(a) representante legal da Reclamada;
-- Oitiva de testemunhas (até 3);
-- Juntada de documentos;
-- Perícia técnica, se necessário.
-
-
-V - DO VALOR DA CAUSA
-
-Para os devidos fins legais, atribui-se à presente causa o valor de ${formatCurrency(totalValue)}.
-
-
-Termos em que,
-Pede deferimento.
-
-${q.cidade || '[Cidade]'} - ${q.estado || '[Estado]'}, ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}.
-
+${q.cidade || '[Local]'}, ${new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
 
 _____________________________________
-${q.nome || '[NOME DO RECLAMANTE]'}
-CPF: ${q.cpf || '[CPF]'}`;
+Assinatura do Reclamante
+${q.nome || '[Nome completo]'}`;
   };
 
   const formatCurrency = (value: number): string => {
