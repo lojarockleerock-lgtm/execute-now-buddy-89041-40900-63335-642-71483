@@ -13,6 +13,7 @@ import Templates from "./pages/Templates";
 import Pricing from "./pages/Pricing";
 import CaseNew from "./pages/CaseNew";
 import CaseEdit from "./pages/CaseEdit";
+import Analysis from "./pages/Analysis";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/case/new" element={<CaseNew />} />
           <Route path="/case/edit/:id" element={<CaseEdit />} />
+          <Route path="/analysis" element={<Analysis />} />
           <Route path="/help" element={<Help />} />
           <Route path="/templates" element={<Templates />} />
           <Route path="/pricing" element={<Pricing />} />

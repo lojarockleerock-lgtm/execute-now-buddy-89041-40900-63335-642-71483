@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, FileText, Calendar, User, Trash2, Eye } from "lucide-react";
+import { Plus, FileText, Calendar, BarChart3, Trash2, Eye } from "lucide-react";
 import { getAllCases, deleteCase, formatCurrency, type SavedCase } from "@/lib/caseStorage";
 import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/Header";
@@ -83,7 +83,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid md:grid-cols-4 gap-6 mb-8">
           <Link to="/case/new" className="block">
             <Card className="card-elevated cursor-pointer hover:shadow-xl transition-all">
               <CardContent className="pt-6">
@@ -94,6 +94,22 @@ const Dashboard = () => {
                   <div>
                     <h3 className="font-semibold">Nova Petição</h3>
                     <p className="text-sm text-muted-foreground">Criar ação trabalhista</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/analysis" className="block">
+            <Card className="card-elevated cursor-pointer hover:shadow-xl transition-all">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <BarChart3 className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Análise</h3>
+                    <p className="text-sm text-muted-foreground">Ver viabilidade</p>
                   </div>
                 </div>
               </CardContent>

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Scale, User, Settings, LogOut, FileText, Moon, Sun, CreditCard } from "lucide-react";
+import { Scale, User, Settings, LogOut, FileText, Moon, Sun, CreditCard, BarChart3 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
@@ -41,6 +41,12 @@ export const Header = () => {
               <Link to="/dashboard" className="cursor-pointer">
                 <FileText className="mr-2 h-4 w-4" />
                 Meus Casos
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/analysis" className="cursor-pointer">
+                <BarChart3 className="mr-2 h-4 w-4" />
+                Análise
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
