@@ -162,6 +162,70 @@ const availableClaims = [
     article: "Art. 456 CLT",
     category: "Verbas",
   },
+  // Verbas Incontroversas - sem campos de valor
+  {
+    id: "saldoSalario",
+    type: "saldoSalario",
+    title: "Saldo de Salário",
+    label: "Saldo de Salário",
+    description: "Dias trabalhados no mês da demissão que ainda não foram pagos",
+    article: "Art. 462 CLT",
+    category: "Verbas Incontroversas",
+  },
+  {
+    id: "avisoPrevioIndenizado",
+    type: "avisoPrevioIndenizado",
+    title: "Aviso-Prévio Indenizado",
+    label: "Aviso-Prévio Indenizado",
+    description: "Aviso-prévio não cumprido pela empresa em caso de demissão sem justa causa",
+    article: "Art. 487 CLT",
+    category: "Verbas Incontroversas",
+  },
+  {
+    id: "feriasVencidas",
+    type: "feriasVencidas",
+    title: "Férias Vencidas + 1/3",
+    label: "Férias Vencidas + 1/3 Constitucional",
+    description: "Férias do período aquisitivo já completo e não usufruídas até a demissão",
+    article: "Arts. 129-153 CLT",
+    category: "Verbas Incontroversas",
+  },
+  {
+    id: "feriasProporcionais",
+    type: "feriasProporcionais",
+    title: "Férias Proporcionais + 1/3",
+    label: "Férias Proporcionais + 1/3",
+    description: "Proporcional ao tempo trabalhado no novo período aquisitivo",
+    article: "Arts. 129-153 CLT",
+    category: "Verbas Incontroversas",
+  },
+  {
+    id: "decimoTerceiroProporcional",
+    type: "decimoTerceiroProporcional",
+    title: "13º Salário Proporcional",
+    label: "13º Salário Proporcional",
+    description: "Calculado com base nos meses trabalhados no ano da demissão",
+    article: "Lei 4.090/62",
+    category: "Verbas Incontroversas",
+  },
+  {
+    id: "multaFGTS40",
+    type: "multaFGTS40",
+    title: "Multa de 40% sobre FGTS",
+    label: "Multa de 40% sobre FGTS",
+    description: "Em casos de dispensa sem justa causa ou rescisão indireta",
+    article: "Lei 8.036/90",
+    category: "Verbas Incontroversas",
+  },
+  {
+    id: "depositosFGTSNaoRealizados",
+    type: "depositosFGTSNaoRealizados",
+    title: "Depósitos de FGTS Não Realizados",
+    label: "Depósitos de FGTS Não Realizados",
+    description: "Depósitos mensais de FGTS não efetuados pela empresa",
+    article: "Lei 8.036/90",
+    category: "Verbas Incontroversas",
+  },
 ];
 
 export const ClaimsStep = ({ data, onChange, factsData }: ClaimsStepProps) => {
@@ -228,6 +292,7 @@ export const ClaimsStep = ({ data, onChange, factsData }: ClaimsStepProps) => {
       Multas: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
       Adicionais: "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200",
       Estabilidade: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200",
+      "Verbas Incontroversas": "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200",
     };
     return colors[category] || "bg-gray-100 text-gray-800";
   };
@@ -778,10 +843,22 @@ export const ClaimsStep = ({ data, onChange, factsData }: ClaimsStepProps) => {
                         {claim.description}
                       </CardDescription>
                     </CardHeader>
-                  </CollapsibleTrigger>
+                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <CardContent onClick={(e) => e.stopPropagation()}>
-                      {renderClaimDetails(claim.id)}
+                      {/* Verbas Incontroversas não têm campos de detalhes */}
+                      {claim.category === "Verbas Incontroversas" ? (
+                        <div className="p-4 bg-success/5 border border-success/20 rounded-lg">
+                          <p className="text-sm text-muted-foreground">
+                            ✅ Esta verba será calculada automaticamente com base nos dados informados (salário, período trabalhado, tipo de demissão, etc.).
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-2">
+                            💡 Não é necessário inserir valores manualmente. Os cálculos aparecerão na aba <strong>Cálculos</strong>.
+                          </p>
+                        </div>
+                      ) : (
+                        renderClaimDetails(claim.id)
+                      )}
                     </CardContent>
                   </CollapsibleContent>
                 </Card>

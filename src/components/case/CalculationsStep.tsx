@@ -66,14 +66,92 @@ export const CalculationsStep = ({ data, onChange }: CalculationsStepProps) => {
     data.claims.forEach((claim, index) => {
       const claimText = claim.label || claim.title || claim.type || claim;
       const claimLower = typeof claimText === 'string' ? claimText.toLowerCase() : '';
+      const claimType = claim.type || claim.id || '';
       let baseValue = 0;
       let reflexos = 0;
       let formula = "";
       let editable = true;
       let confidenceLevel: ConfidenceLevel = salario > 0 && mesesTrabalhados > 0 ? "high" : "low";
 
+      // ============ VERBAS INCONTROVERSAS (calculadas automaticamente) ============
+      
+      // Saldo de Salário
+      if (claimType === "saldoSalario") {
+        const diasUteis = 20; // Estimativa média de dias úteis no mês
+        const diasTrabalhados = 10; // Estimativa de meio mês
+        baseValue = (salario / diasUteis) * diasTrabalhados;
+        reflexos = 0;
+        formula = "(Salário ÷ dias úteis do mês) × dias trabalhados";
+        editable = false;
+        confidenceLevel = salario > 0 ? "high" : "low";
+      }
+      
+      // Aviso-Prévio Indenizado
+      else if (claimType === "avisoPrevioIndenizado") {
+        // Art. 487 CLT: 30 dias + 3 dias por ano trabalhado (até 60 dias adicionais)
+        const anosCompletos = Math.floor(mesesTrabalhados / 12);
+        const diasAdicionais = Math.min(anosCompletos * 3, 60);
+        const totalDias = 30 + diasAdicionais;
+        baseValue = (salario / 30) * totalDias;
+        reflexos = baseValue * 0.08; // FGTS sobre aviso
+        formula = `Salário × (30 dias + ${diasAdicionais} dias adicionais) / 30`;
+        editable = false;
+        confidenceLevel = salario > 0 && mesesTrabalhados > 0 ? "high" : "low";
+      }
+      
+      // Férias Vencidas + 1/3
+      else if (claimType === "feriasVencidas") {
+        const periodosVencidos = Math.floor(mesesTrabalhados / 12);
+        baseValue = salario * (4/3) * periodosVencidos; // Cada período = salário + 1/3
+        reflexos = baseValue * 0.08; // FGTS
+        formula = `Salário × 4/3 × ${periodosVencidos} período(s) vencido(s)`;
+        editable = false;
+        confidenceLevel = salario > 0 && mesesTrabalhados >= 12 ? "high" : "medium";
+      }
+      
+      // Férias Proporcionais + 1/3
+      else if (claimType === "feriasProporcionais") {
+        const mesesProporcional = mesesTrabalhados % 12;
+        baseValue = (salario / 12) * mesesProporcional * (4/3);
+        reflexos = baseValue * 0.08; // FGTS
+        formula = `(Salário ÷ 12) × ${mesesProporcional} meses × 4/3`;
+        editable = false;
+        confidenceLevel = salario > 0 && mesesTrabalhados > 0 ? "high" : "low";
+      }
+      
+      // 13º Salário Proporcional
+      else if (claimType === "decimoTerceiroProporcional") {
+        const mesesAno = mesesTrabalhados > 12 ? 12 : mesesTrabalhados;
+        baseValue = (salario / 12) * mesesAno;
+        reflexos = baseValue * 0.08; // FGTS
+        formula = `(Salário ÷ 12) × ${mesesAno} meses`;
+        editable = false;
+        confidenceLevel = salario > 0 ? "high" : "low";
+      }
+      
+      // Multa de 40% sobre FGTS
+      else if (claimType === "multaFGTS40") {
+        const fgtsTotal = salario * 0.08 * mesesTrabalhados;
+        baseValue = fgtsTotal * 0.40;
+        reflexos = 0;
+        formula = `(FGTS Total: R$ ${fgtsTotal.toFixed(2)}) × 40%`;
+        editable = false;
+        confidenceLevel = salario > 0 && mesesTrabalhados > 0 ? "high" : "low";
+      }
+      
+      // Depósitos de FGTS Não Realizados
+      else if (claimType === "depositosFGTSNaoRealizados") {
+        baseValue = salario * 0.08 * mesesTrabalhados;
+        reflexos = 0;
+        formula = `Salário × 8% × ${mesesTrabalhados} meses`;
+        editable = false;
+        confidenceLevel = salario > 0 && mesesTrabalhados > 0 ? "high" : "low";
+      }
+      
+      // ============ OUTROS PEDIDOS (lógica existente) ============
+
       // Horas Extras
-      if (claimLower.includes("horas extras") || claimLower.includes("hora extra")) {
+      else if (claimLower.includes("horas extras") || claimLower.includes("hora extra")) {
         const horasPorMes = 40; // Estimativa média
         const valorHora = salario / 220;
         const adicional = 1.5; // 50%
