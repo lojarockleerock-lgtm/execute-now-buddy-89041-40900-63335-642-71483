@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, Video } from "lucide-react";
+import HelpVideoDialog from "./HelpVideoDialog";
 
 interface ClaimsStepProps {
   data: any[];
@@ -171,6 +172,7 @@ export const ClaimsStep = ({ data, onChange, factsData }: ClaimsStepProps) => {
     data.reduce((acc, claim) => ({ ...acc, [claim.id]: claim.details || {} }), {})
   );
   const [showHelp, setShowHelp] = useState(true);
+  const [showHelpVideo, setShowHelpVideo] = useState(false);
 
   // Extrair pedidos sugeridos dos eventos
   const suggestedClaimsFromEvents = factsData?.facts
@@ -668,7 +670,11 @@ export const ClaimsStep = ({ data, onChange, factsData }: ClaimsStepProps) => {
             </p>
           </div>
         </div>
-        <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0">
+        <Button 
+          variant="outline" 
+          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0"
+          onClick={() => setShowHelpVideo(true)}
+        >
           <Video className="h-4 w-4 mr-2" />
           Veja como preencher
         </Button>
@@ -804,6 +810,13 @@ export const ClaimsStep = ({ data, onChange, factsData }: ClaimsStepProps) => {
           tudo que você acha que foi violado. O juiz analisará cada pedido individualmente.
         </p>
       </div>
+
+      <HelpVideoDialog
+        open={showHelpVideo}
+        onOpenChange={setShowHelpVideo}
+        stepName="Pedidos"
+        stepId="claims"
+      />
     </div>
   );
 };

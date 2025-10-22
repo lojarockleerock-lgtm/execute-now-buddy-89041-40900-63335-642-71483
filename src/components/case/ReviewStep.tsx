@@ -20,6 +20,7 @@ import {
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import JSZip from "jszip";
+import HelpVideoDialog from "./HelpVideoDialog";
 
 interface ReviewStepProps {
   caseData: any;
@@ -28,6 +29,7 @@ interface ReviewStepProps {
 export const ReviewStep = ({ caseData }: ReviewStepProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [petitionText, setPetitionText] = useState("");
+  const [showHelpVideo, setShowHelpVideo] = useState(false);
   
   const handleGeneratePDF = () => {
     if (!petitionText) {
@@ -268,7 +270,11 @@ ${q.nome || '[Nome completo]'}`;
             </p>
           </div>
         </div>
-        <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0">
+        <Button 
+          variant="outline" 
+          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0"
+          onClick={() => setShowHelpVideo(true)}
+        >
           <Video className="h-4 w-4 mr-2" />
           Veja como preencher
         </Button>
@@ -532,6 +538,13 @@ ${q.nome || '[Nome completo]'}`;
           </p>
         </CardContent>
       </Card>
+
+      <HelpVideoDialog
+        open={showHelpVideo}
+        onOpenChange={setShowHelpVideo}
+        stepName="Revisão"
+        stepId="review"
+      />
     </div>
   );
 };

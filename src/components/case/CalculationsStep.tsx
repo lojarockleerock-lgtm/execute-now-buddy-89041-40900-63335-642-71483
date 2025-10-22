@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Info, Calculator, Edit2, Check, AlertTriangle, CheckCircle2, ChevronDown, ChevronUp, Video } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import HelpVideoDialog from "./HelpVideoDialog";
 
 interface CalculationsStepProps {
   data: {
@@ -37,6 +38,7 @@ export const CalculationsStep = ({ data, onChange }: CalculationsStepProps) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [expandedCards, setExpandedCards] = useState<string[]>([]);
   const [editedValues, setEditedValues] = useState<Record<string, number>>({});
+  const [showHelpVideo, setShowHelpVideo] = useState(false);
 
   // Helper para calcular meses entre duas datas
   const calculateMonths = (start: string, end: string): number => {
@@ -275,7 +277,11 @@ export const CalculationsStep = ({ data, onChange }: CalculationsStepProps) => {
             Aqui estão os cálculos automáticos baseados nos dados informados.
           </p>
         </div>
-        <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0">
+        <Button 
+          variant="outline" 
+          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0"
+          onClick={() => setShowHelpVideo(true)}
+        >
           <Video className="h-4 w-4 mr-2" />
           Veja como preencher
         </Button>
@@ -513,6 +519,13 @@ export const CalculationsStep = ({ data, onChange }: CalculationsStepProps) => {
           </Alert>
         </>
       )}
+
+      <HelpVideoDialog
+        open={showHelpVideo}
+        onOpenChange={setShowHelpVideo}
+        stepName="Cálculos"
+        stepId="calculations"
+      />
     </div>
   );
 };

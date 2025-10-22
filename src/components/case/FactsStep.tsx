@@ -8,6 +8,7 @@ import { Plus, Trash2, Calendar, Info, Video } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { dismissalTypes, eventTypes, getEventTypeByValue } from "@/lib/eventClaimMapping";
+import HelpVideoDialog from "./HelpVideoDialog";
 
 interface FactsStepProps {
   data: any;
@@ -20,6 +21,7 @@ export const FactsStep = ({ data, onChange }: FactsStepProps) => {
   const [dismissalType, setDismissalType] = useState(
     Array.isArray(data) ? "" : (data?.dismissalType || "")
   );
+  const [showHelpVideo, setShowHelpVideo] = useState(false);
 
   const addFact = () => {
     const newFact = {
@@ -76,7 +78,11 @@ export const FactsStep = ({ data, onChange }: FactsStepProps) => {
             </p>
           </div>
         </div>
-        <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0">
+        <Button 
+          variant="outline" 
+          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0"
+          onClick={() => setShowHelpVideo(true)}
+        >
           <Video className="h-4 w-4 mr-2" />
           Veja como preencher
         </Button>
@@ -250,6 +256,13 @@ export const FactsStep = ({ data, onChange }: FactsStepProps) => {
           Esses fatos serão fundamentais para sua petição.
         </p>
       </div>
+
+      <HelpVideoDialog
+        open={showHelpVideo}
+        onOpenChange={setShowHelpVideo}
+        stepName="Fatos"
+        stepId="facts"
+      />
     </div>
   );
 };

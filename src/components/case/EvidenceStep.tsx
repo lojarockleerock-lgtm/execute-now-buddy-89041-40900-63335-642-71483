@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Upload, FileText, Image, Film, Mic, Trash2, CheckCircle, ChevronDown, AlertCircle, Lightbulb, Clock, Calendar, Users, MessageSquare, Heart, AlertTriangle, Camera, Receipt, IdCard, BookOpen, Video } from "lucide-react";
 import { toast } from "sonner";
 import { getSuggestedEvidencesForClaim } from "@/lib/evidenceSuggestions";
+import HelpVideoDialog from "./HelpVideoDialog";
 
 interface EvidenceStepProps {
   data: any[];
@@ -24,6 +25,7 @@ const iconMap: Record<string, any> = {
 export const EvidenceStep = ({ data, onChange, claimsData = [] }: EvidenceStepProps) => {
   const [evidences, setEvidences] = useState(data || []);
   const [expandedClaims, setExpandedClaims] = useState<string[]>([]);
+  const [showHelpVideo, setShowHelpVideo] = useState(false);
 
   useEffect(() => {
     setEvidences(data || []);
@@ -142,7 +144,11 @@ export const EvidenceStep = ({ data, onChange, claimsData = [] }: EvidenceStepPr
             </p>
           </div>
         </div>
-        <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0">
+        <Button 
+          variant="outline" 
+          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0"
+          onClick={() => setShowHelpVideo(true)}
+        >
           <Video className="h-4 w-4 mr-2" />
           Veja como preencher
         </Button>
@@ -350,6 +356,13 @@ export const EvidenceStep = ({ data, onChange, claimsData = [] }: EvidenceStepPr
           </ul>
         </CardContent>
       </Card>
+
+      <HelpVideoDialog
+        open={showHelpVideo}
+        onOpenChange={setShowHelpVideo}
+        stepName="Provas"
+        stepId="evidence"
+      />
     </div>
   );
 };

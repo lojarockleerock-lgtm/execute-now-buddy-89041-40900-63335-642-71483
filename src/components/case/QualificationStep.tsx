@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
+import HelpVideoDialog from "./HelpVideoDialog";
 import { 
   formatCPF, 
   formatCNPJ, 
@@ -36,6 +37,7 @@ interface QualificationStepProps {
 export const QualificationStep = ({ data, onChange }: QualificationStepProps) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loadingCEP, setLoadingCEP] = useState<Record<string, boolean>>({});
+  const [showHelpVideo, setShowHelpVideo] = useState(false);
   const { toast } = useToast();
 
   const handleChange = (field: string, value: string | boolean) => {
@@ -168,7 +170,11 @@ export const QualificationStep = ({ data, onChange }: QualificationStepProps) =>
             Preencha os dados do trabalhador, da empresa e da relação de trabalho.
           </p>
         </div>
-        <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0">
+        <Button 
+          variant="outline" 
+          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0"
+          onClick={() => setShowHelpVideo(true)}
+        >
           <Video className="h-4 w-4 mr-2" />
           Veja como preencher
         </Button>
@@ -673,6 +679,13 @@ export const QualificationStep = ({ data, onChange }: QualificationStepProps) =>
           Quanto mais informações você fornecer, mais completa será sua petição.
         </p>
       </div>
+
+      <HelpVideoDialog
+        open={showHelpVideo}
+        onOpenChange={setShowHelpVideo}
+        stepName="Qualificação"
+        stepId="qualification"
+      />
     </div>
   );
 };
